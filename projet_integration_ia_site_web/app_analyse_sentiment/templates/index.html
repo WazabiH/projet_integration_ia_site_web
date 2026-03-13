@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat IA</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+<body>
+
+<div class="chat-container">
+
+    <header class="chat-header">
+        <h1> IA pour analyse de sentiment </h1>
+    </header>
+
+    <main class="chat-messages" id="chatMessages">
+        {% if messages %}
+            {% for msg in messages %}
+                {% if msg.role != 'system' %}
+                    {% set is_last = loop.last and msg.role == 'assistant' %}
+                    <div class="message {{ msg.role }}">
+                        {% if is_last %}
+                            <!-- Message streamé -->
+                             <p class="streaming">{{ msg.content }}></p>
+                        {% else %}
+                            <!-- Messages normaux -->
+                            <p>{{ msg.content }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="message system">
+                <p>Bienvenue dans le chat IA ! Comment puis-je vous aider aujourd'hui ?</p>
+            </div>
+        {% endif %}
+    </main>
+
+
+    <footer class="chat-input">
+        <form method="post">
+            <input type="text" name="message" placeholder="Écris ton message..." required>
+            <button type="submit">Envoyer</button>
+        </form>
+    </footer>
+
+</div>
+
+</body>
+</html>

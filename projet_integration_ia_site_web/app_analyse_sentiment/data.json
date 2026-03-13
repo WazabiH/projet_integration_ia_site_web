@@ -1,0 +1,34 @@
+[
+  {
+    "role": "user",
+    "content": "je vais pas  bien"
+  },
+  {
+    "role": "assistant",
+    "content": "Sentiment détecté : positif (97.01%)"
+  },
+  {
+    "role": "user",
+    "content": "je suis tristre"
+  },
+  {
+    "role": "assistant",
+    "content": "Sentiment détecté : négatif (94.11%)"
+  },
+  {
+    "role": "user",
+    "content": "fcedfd"
+  },
+  {
+    "role": "assistant",
+    "content": "Sentiment détecté : négatif (83.48%)"
+  },
+  {
+    "role": "user",
+    "content": "J EN EST MARRE"
+  },
+  {
+    "role": "assistant",
+    "content": "Sentiment détecté : positif (88.39%)"
+  }
+]
