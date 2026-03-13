@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
 from transformers import pipeline
 import json
 import os
@@ -7,10 +7,12 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data.json")
 
 app = Flask(__name__)
 
-# Chargement du modèle de sentiment
-classifier = pipeline("sentiment-analysis")
+classifier = pipeline(
+    "sentiment-analysis",
+    model="nlptown/bert-base-multilingual-uncased-sentiment"
+)
 
-def load_messages():
+def load_history():
     if not os.path.exists(DATA_DIR):
         return []
     with open(DATA_DIR, "r", encoding="utf-8") as f:
@@ -19,36 +21,68 @@ def load_messages():
         except json.JSONDecodeError:
             return []
 
-def save_messages(messages):
+def save_history(history):
     with open(DATA_DIR, "w", encoding="utf-8") as f:
-        json.dump(messages, f, ensure_ascii=False, indent=2)
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+def convert_label(label):
+    stars = int(label[0])
+    if stars <= 2:
+        return "Négatif"
+    elif stars == 3:
+        return "Neutre"
+    else:
+        return "Positif"
+
+def heuristic_fix(message, predicted_sentiment):
+    text = message.lower().strip()
+
+    negative_keywords = [
+        "j'en ai marre", "jen ai marre", "marre",
+        "pas bien", "triste", "déçu", "decu", "nul",
+        "horrible", "catastrophe", "mauvais", "mal",
+        "je vais mal", "ça va mal", "sa va mal"
+    ]
+
+    positive_keywords = [
+        "heureux", "heureuse", "joyeux", "joyeuse",
+        "j'aime", "j’adore", "j'adore", "trop bien",
+        "incroyable", "super", "génial", "genial",
+        "meilleure vie", "joie de vivre", "content", "contente"
+    ]
+
+    for word in negative_keywords:
+        if word in text:
+            return "Négatif"
+
+    for word in positive_keywords:
+        if word in text:
+            return "Positif"
+
+    return predicted_sentiment
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/sentiment/", methods=["GET", "POST"])
 def index():
+    result = None
+    history = load_history()
+
     if request.method == "POST":
-        messages = load_messages()
+        message = request.form.get("message", "").strip()
 
-        message = request.form["message"].strip()
         if message:
-            messages.append({"role": "user", "content": message})
+            prediction = classifier(message.lower())[0]
+            sentiment = convert_label(prediction["label"])
+            sentiment = heuristic_fix(message, sentiment)
+            score = round(prediction["score"] * 100, 2)
 
-            result = classifier(message)[0]
-            label = result["label"]
-            score = round(result["score"] * 100, 2)
+            result = {
+                "text": message,
+                "sentiment": sentiment,
+                "score": score
+            }
 
-            # Adaptation simple des labels
-            if label.upper() == "POSITIVE":
-                sentiment = f"Sentiment détecté : positif ({score}%)"
-            elif label.upper() == "NEGATIVE":
-                sentiment = f"Sentiment détecté : négatif ({score}%)"
-            else:
-                sentiment = f"Sentiment détecté : {label} ({score}%)"
+            history.insert(0, result)
+            save_history(history)
 
-            messages.append({"role": "assistant", "content": sentiment})
-            save_messages(messages)
-
-        return redirect("/sentiment/")
-
-    messages = load_messages()
-    return render_template("index.html", messages=messages)
+    return render_template("index.html", result=result, history=history[:10])

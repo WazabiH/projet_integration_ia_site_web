@@ -2,49 +2,73 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Chat IA</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse de sentiment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <div class="container">
+        <header class="hero">
+            <h1>Analyse de sentiment avec IA</h1>
+            <p>Entrez un texte pour détecter automatiquement son ton émotionnel.</p>
+        </header>
 
-<div class="chat-container">
+        <section class="card form-card">
+            <form method="post">
+                <label for="message">Votre texte</label>
+                <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    placeholder="Exemple : Je suis très satisfait de cette application."
+                    required
+                ></textarea>
+                <button type="submit">Analyser</button>
+            </form>
+        </section>
 
-    <header class="chat-header">
-        <h1> IA pour analyse de sentiment </h1>
-    </header>
-
-    <main class="chat-messages" id="chatMessages">
-        {% if messages %}
-            {% for msg in messages %}
-                {% if msg.role != 'system' %}
-                    {% set is_last = loop.last and msg.role == 'assistant' %}
-                    <div class="message {{ msg.role }}">
-                        {% if is_last %}
-                            <!-- Message streamé -->
-                             <p class="streaming">{{ msg.content }}></p>
-                        {% else %}
-                            <!-- Messages normaux -->
-                            <p>{{ msg.content }}</p>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            <div class="message system">
-                <p>Bienvenue dans le chat IA ! Comment puis-je vous aider aujourd'hui ?</p>
-            </div>
+        {% if result %}
+        <section class="card result-card">
+            <h2>Résultat</h2>
+            <p><strong>Texte :</strong> {{ result.text }}</p>
+            <p>
+                <strong>Sentiment détecté :</strong>
+                <span class="
+                    badge
+                    {% if result.sentiment == 'Positif' %}positive{% endif %}
+                    {% if result.sentiment == 'Négatif' %}negative{% endif %}
+                    {% if result.sentiment == 'Neutre' %}neutral{% endif %}
+                ">
+                    {{ result.sentiment }}
+                </span>
+            </p>
+            <p><strong>Confiance :</strong> {{ result.score }} %</p>
+        </section>
         {% endif %}
-    </main>
 
-
-    <footer class="chat-input">
-        <form method="post">
-            <input type="text" name="message" placeholder="Écris ton message..." required>
-            <button type="submit">Envoyer</button>
-        </form>
-    </footer>
-
-</div>
-
+        {% if history %}
+        <section class="card history-card">
+            <h2>Historique</h2>
+            <div class="history-list">
+                {% for item in history %}
+                <div class="history-item">
+                    <p class="history-text">{{ item.text }}</p>
+                    <div class="history-meta">
+                        <span class="
+                            badge
+                            {% if item.sentiment == 'Positif' %}positive{% endif %}
+                            {% if item.sentiment == 'Négatif' %}negative{% endif %}
+                            {% if item.sentiment == 'Neutre' %}neutral{% endif %}
+                        ">
+                            {{ item.sentiment }}
+                        </span>
+                        <span>{{ item.score }} %</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
 </body>
 </html>

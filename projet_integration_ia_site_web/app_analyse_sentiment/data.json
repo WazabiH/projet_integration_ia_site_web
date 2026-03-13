@@ -1,5 +1,65 @@
 [
   {
+    "text": "je suis épuisé",
+    "sentiment": "Négatif",
+    "score": 43.99
+  },
+  {
+    "text": "JE SUIS SUPER HEUREUSE",
+    "sentiment": "Positif",
+    "score": 82.2
+  },
+  {
+    "text": "je susi heureuse",
+    "sentiment": "Positif",
+    "score": 57.28
+  },
+  {
+    "text": "j'en ai marre",
+    "sentiment": "Négatif",
+    "score": 32.45
+  },
+  {
+    "text": "j'en ai marre",
+    "sentiment": "Positif",
+    "score": 32.45
+  },
+  {
+    "text": "je vie ma meilleur vie",
+    "sentiment": "Positif",
+    "score": 68.07
+  },
+  {
+    "text": "heureux",
+    "sentiment": "Positif",
+    "score": 70.0
+  },
+  {
+    "text": "je suis trés heureuse en ce moment",
+    "sentiment": "Positif",
+    "score": 67.82
+  },
+  {
+    "text": "J4AIME TROP LA VIE JE SUIS TROP HERUEUSE",
+    "sentiment": "Négatif",
+    "score": 35.37
+  },
+  {
+    "text": "JE PETE LA JOIE DE VIVRE",
+    "sentiment": "Positif",
+    "score": 48.59
+  },
+  {
+    "text": "je suis très heureuse en ce moment",
+    "sentiment": "Positif",
+    "score": 67.82
+  },
+  {
+    "text": "je ne suis pas satisfaite de cette application mais vraiment pas du tout",
+    "sentiment": "Négatif",
+    "score": 57.56
+  },
+  {
     "role": "user",
     "content": "je vais pas  bien"
   },
